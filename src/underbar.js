@@ -46,7 +46,7 @@ var _ = { };
   // Note: _.each does not have a return value, but rather simply runs the
   // iterator function over each item in the input collection.
   _.each = function(collection, iterator) {
-    if (Array.isArray(collection)) {
+    if (!(collection.length === undefined)) {
       for (var i = 0; i < collection.length; i++) {
         iterator(collection[i], i, collection);
       }
@@ -161,7 +161,7 @@ var _ = { };
   //   }, 0); // should be 6
   _.reduce = function(collection, iterator, accumulator) {
     if (accumulator === undefined) {
-      if (Array.isArray(collection)) {
+      if (!(collection.length === undefined)) {
         accumulator = collection[0];
       } else {
         accumulator = collection[Object.keys(collection)[0]]
