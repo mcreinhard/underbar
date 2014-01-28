@@ -323,6 +323,13 @@ var _ = { };
   // input array. For a tip on how to make a copy of an array, see:
   // http://mdn.io/Array.prototype.slice
   _.shuffle = function(array) {
+    var arrayCopy = array.slice();
+    var result = [];
+    while(arrayCopy.length > 0) {
+      var indexToRemove = Math.floor(Math.random() * arrayCopy.length);
+      result.push(arrayCopy.splice(indexToRemove, 1)[0]);
+    }
+    return result;
   };
 
 
