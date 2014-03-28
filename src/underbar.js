@@ -344,6 +344,38 @@ var _ = { };
   // of that string. For example, _.sortBy(people, 'name') should sort
   // an array of people by their name.
   _.sortBy = function(collection, iterator) {
+    if (!Array.isArray(collection)) {
+      // Converts to array of values
+      collection = _.map(collection, _.identity);
+    }
+    if (typeof(iterator) !== "function") {
+      var key = iterator;
+      iterator = function(obj) {
+        return obj[key];
+      };
+    }
+    // Quicksort:
+    if (collection.length <= 1) {
+      return collection;
+    }
+    var pivotIndex = Math.floor(Math.random() * collection.length);
+    var pivot = iterator(collection[pivotIndex]);
+    var less = [];
+    var equal = [];
+    var greater = [];
+    _.each(collection, function(value) {
+      var iterated = iterator(value);
+      if (iterated === pivot) {
+        equal.push(value);
+      } else if (iterated < pivot || pivot === undefined) {
+        less.push(value);
+      } else if (iterated > pivot || iterated === undefined) {
+        greater.push(value);
+      }
+    });
+    less = _.sortBy(less, iterator);
+    greater = _.sortBy(greater, iterator);
+    return less.concat(equal, greater);
   };
 
   // Zip together two or more arrays with elements of the same index
@@ -358,7 +390,14 @@ var _ = { };
   // The new array should contain all elements of the multidimensional array.
   //
   // Hint: Use Array.isArray to check if something is an array
-  _.flatten = function(nestedArray, result) {
+  _.flatten = function(nestedArray) {
+    if (!Array.isArray(nestedArray)) {
+      return nestedArray;
+    } else {
+      return _.reduce(nestedArray, function(accumulator, value) {
+        return accumulator.concat(_.flatten(value));
+      }, []);
+    }
   };
 
   // Takes an arbitrary number of arrays and produces an array that contains
