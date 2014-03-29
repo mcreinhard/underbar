@@ -425,6 +425,14 @@ var _ = { };
   // Take the difference between one array and a number of other arrays.
   // Only the elements present in just the first array will remain.
   _.difference = function(array) {
+    var subtractedArrays = Array.prototype.slice.call(arguments, 1);
+    return _.filter(array, function(itemInFirstArray) {
+      return _.every(subtractedArrays, function(arr) {
+        return !_.some(arr, function(item) {
+          return item === itemInFirstArray;
+        });
+      });
+    });
   };
 
 
