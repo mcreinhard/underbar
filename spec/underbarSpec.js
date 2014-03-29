@@ -636,7 +636,8 @@ describe("throttle", function() {
     var throttledIncr = _.throttle(incr, 64);
     var results = [];
     var saveResult = function() {
-      results.push(throttledIncr());
+      throttledIncr();
+      results.push(counter);
     };
     saveResult();
     saveResult();
