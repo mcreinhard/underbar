@@ -608,7 +608,6 @@ describe("throttle", function() {
 
     expect(counter).to.eql(1);
     setTimeout(function() {
-      throttledIncr();
       expect(counter).to.eql(2);
       done();
     }, 64);
@@ -636,8 +635,7 @@ describe("throttle", function() {
     var throttledIncr = _.throttle(incr, 64);
     var results = [];
     var saveResult = function() {
-      throttledIncr();
-      results.push(counter);
+      results.push(throttledIncr());
     };
     saveResult();
     saveResult();

@@ -445,15 +445,46 @@ var _ = { };
   // during a given window of time.
   //
   // See the Underbar readme for details.
+  
+  // Note on implementation:
+  // When a call is scheduled, it is possible for a the throttled funciton to
+  // be successfully called manually before the scheduled call is executed,
+  // due to the delayed nature of setTimeout. In this case, the scheduled call
+  // will reschedule to the next available time. Hence in the following
+  // situation:
+  //
+  // (time = 0 ms)
+  //   f = _.throttle(g, 100);
+  //   f(); // Call 1
+  // (time = 50 ms)
+  //   f(); // Call 2
+  // (time = 102 ms)
+  //   f(); // Call 3
+  //
+  // Even if the call to g scheduled by Call 2 is delayed so that it occurs
+  // after Call 3, there will still be three calls to g at time = 0 ms, ~100 ms,
+  // and ~200 ms, which matches the "correct" behavior of the scheduled call
+  // occurring first.
   _.throttle = function(func, wait) {
     var timeLastCalled = 0;
-    return function() {
+    var isScheduled = false;
+    var lastResult;
+    var throttledFunc = function() {
+      var throttledFuncArgs = arguments;
       var currentTime = new Date().getTime();
       if (currentTime - timeLastCalled >= wait) {
         timeLastCalled = currentTime;
-        return func();
+        lastResult = func.apply(this, throttledFuncArgs);
+      } else if (!isScheduled) {
+        isScheduled = true;
+        setTimeout(function() {
+          isScheduled = false;
+          throttledFunc.apply(this, throttledFuncArgs);
+        }, wait - (currentTime - timeLastCalled));
       }
+      return lastResult;
     }
+    return throttledFunc;
   };
 
 }).call(this);
