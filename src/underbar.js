@@ -324,12 +324,14 @@ var _ = { };
   // http://mdn.io/Array.prototype.slice
   _.shuffle = function(array) {
     var arrayCopy = array.slice();
-    var result = [];
-    while(arrayCopy.length > 0) {
-      var indexToRemove = Math.floor(Math.random() * arrayCopy.length);
-      result.push(arrayCopy.splice(indexToRemove, 1)[0]);
+    // Fisher-Yates
+    for (var i = arrayCopy.length - 1; i >= 0; i--) {
+      var indexToSwitch = Math.floor(Math.random() * i);
+      var temp = arrayCopy[i];
+      arrayCopy[i] = arrayCopy[indexToSwitch];
+      arrayCopy[indexToSwitch] = temp;
     }
-    return result;
+    return arrayCopy;
   };
 
 
@@ -447,7 +449,7 @@ var _ = { };
   // See the Underbar readme for details.
   
   // Note on implementation:
-  // When a call is scheduled, it is possible for a the throttled funciton to
+  // When a call is scheduled, it is possible for the throttled funciton to
   // be successfully called manually before the scheduled call is executed,
   // due to the delayed nature of setTimeout. In this case, the scheduled call
   // will reschedule to the next available time. Hence in the following
